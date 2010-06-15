@@ -29,12 +29,12 @@ import android.widget.ArrayAdapter;
 public class SearchHansard extends Activity
 {
 
-	private static EditText et;
-	private static TextView tv;
-	private static Spinner houseselect;
+	private EditText _et;
+	private TextView _tv;
+	private Spinner houseselect;
 	private static final String oakey = "F8c6oBD4YQsvEAGJT8DUgL8p";
-	private static Button hansbutton;
-	private static LinearLayout hansinner;
+	private Button hansbutton;
+	private LinearLayout hansinner;
 
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -52,11 +52,11 @@ public class SearchHansard extends Activity
 
 			public void onClick(View v)
 			{
-				et = (EditText) findViewById(R.id.SearchHansardText);
+				_et = (EditText) findViewById(R.id.SearchHansardText);
 				String urlString = "http://www.openaustralia.org/api/getDebates" +
 				"?key=" + oakey +
 				"&type=" + houseselect.getSelectedItem().toString() +
-				"&search=" + URLEncoder.encode(et.getText().toString()) +
+				"&search=" + URLEncoder.encode(_et.getText().toString()) +
 				"&output=json";
 				String result;
 				try
@@ -134,11 +134,11 @@ public class SearchHansard extends Activity
 	/** is this even used ? */
 	public void searchHansardButtonClick(View target) throws IOException
 	{
-		et = (EditText) findViewById(R.id.SearchHansardText);
+		_et = (EditText) findViewById(R.id.SearchHansardText);
 		String urlString = "http://www.openaustralia.org/api/getDebates" +
 		"?key=" + oakey +
 		"&type=" + houseselect.getSelectedItem().toString() +
-		"&search=" + URLEncoder.encode(et.getText().toString()) +
+		"&search=" + URLEncoder.encode(_et.getText().toString()) +
 		"&output=json";
 		String result = Utilities.getDataFromUrl(urlString, "url");
 		Log.i("GetResult",result);
@@ -208,7 +208,7 @@ public class SearchHansard extends Activity
 				}
 				memdata += quote + "\n\n";
 			}
-			tv.setText(memdata);
+			_tv.setText(memdata);
 		}
 		/*
 		catch (IOException e)

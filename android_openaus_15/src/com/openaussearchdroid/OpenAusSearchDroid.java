@@ -35,9 +35,9 @@ public class OpenAusSearchDroid extends Activity
 {
 	/** Called when the activity is first created. */
 
-	private static Button repbutt;
-	private static Button senbutt;
-	private static Button hansbutt;
+	private Button repbutt;
+	private Button senbutt;
+	private Button hansbutt;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)

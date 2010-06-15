@@ -66,17 +66,17 @@ public class SearchReps extends Activity
 				"&division=" + URLEncoder.encode(etext.getText().toString()) +
 				"&output=json";
 				String result;
-				try 
+				try
 				{
 					result = Utilities.getDataFromUrl(urlString, "OpenAusURL");
 				}
-				catch (IOException e) 
+				catch (IOException e)
 				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 					return;
 				}
-				
+
 				try
 				{
 					Log.i("GetResult",result);
@@ -211,7 +211,7 @@ public class SearchReps extends Activity
 							exceptJSON.setId(1231);
 							exceptJSON.setText(e.getMessage());
 							tab.addView(exceptJSON);
-							return;	
+							return;
 						}
 
 						JSONArray hansresArray;

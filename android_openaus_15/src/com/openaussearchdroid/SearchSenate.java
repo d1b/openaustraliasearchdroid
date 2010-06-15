@@ -38,7 +38,7 @@ public class SearchSenate extends Activity
 {
 
 	private static final String oakey = "F8c6oBD4YQsvEAGJT8DUgL8p";
-	private static Spinner states;
+	private Spinner states;
 	private TableLayout innerlayout;
 
 
@@ -48,7 +48,7 @@ public class SearchSenate extends Activity
 		setContentView(R.layout.searchrep_senate);
 		states = (Spinner) findViewById(R.id.StateSpinner);
 		innerlayout = (TableLayout) findViewById(R.id.SenateTable);
-		final String[] items = {"NSW", "VIC", "QLD", "TAS", "WA", "SA", "NT", "ACT"};
+		final String[] items = {"NSW", "VIC", "queensland", "TAS", "WA", "SA", "NT", "ACT"};
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 		android.R.layout.simple_spinner_item, items);
 
