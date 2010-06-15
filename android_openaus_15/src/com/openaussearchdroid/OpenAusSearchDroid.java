@@ -31,49 +31,53 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 
-public class OpenAusSearchDroid extends Activity {
-    /** Called when the activity is first created. */
-	
+public class OpenAusSearchDroid extends Activity 
+{
+	/** Called when the activity is first created. */
+
 	private static Button repbutt;
 	private static Button senbutt;
 	private static Button hansbutt;
-	
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
-        repbutt = (Button) findViewById(R.id.SearchRep_Reps);
-        senbutt = (Button) findViewById(R.id.SearchRep_Senate);
-        hansbutt = (Button) findViewById(R.id.SearchHansard);
-        
-        repbutt.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View v) {
+
+	@Override
+	public void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.main);
+		repbutt = (Button) findViewById(R.id.SearchRep_Reps);
+		senbutt = (Button) findViewById(R.id.SearchRep_Senate);
+		hansbutt = (Button) findViewById(R.id.SearchHansard);
+
+		repbutt.setOnClickListener(new View.OnClickListener()
+		{
+			public void onClick(View v)
+			{
 				// TODO Auto-generated method stub
 				Intent myIntent = new Intent(v.getContext(), SearchReps.class);
-		        startActivityForResult(myIntent, 0);
+				startActivityForResult(myIntent, 0);
 			}
 		});
-        
-    senbutt.setOnClickListener(new View.OnClickListener() {
-    	
-    	public void onClick(View v) {
-    		// TODO Auto-generated method stub
-    		Intent myIntent = new Intent(v.getContext(), SearchSenate.class);
-    		startActivityForResult(myIntent, 0);
-		}
+
+		senbutt.setOnClickListener(new View.OnClickListener()
+		{
+			public void onClick(View v)
+			{
+				// TODO Auto-generated method stub
+				Intent myIntent = new Intent(v.getContext(), SearchSenate.class);
+				startActivityForResult(myIntent, 0);
+			}
 		});
-    
-    hansbutt.setOnClickListener(new View.OnClickListener() {
-		
-		
-		public void onClick(View v) {
-			// TODO Auto-generated method stub
-			Intent myIntent = new Intent(v.getContext(), SearchHansard.class);
-	        startActivityForResult(myIntent, 0);
-		}
-	});
-        
-	}	
+
+		hansbutt.setOnClickListener(new View.OnClickListener()
+		{
+			public void onClick(View v)
+			{
+				// TODO Auto-generated method stub
+				Intent myIntent = new Intent(v.getContext(), SearchHansard.class);
+				startActivityForResult(myIntent, 0);
+			}
+		});
+
+	}
 
 }
