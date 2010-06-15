@@ -31,7 +31,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 
-public class OpenAusSearchDroid extends Activity 
+public class OpenAusSearchDroid extends Activity
 {
 	/** Called when the activity is first created. */
 

@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
+
+import android.util.Log;
 
 public class Utilities
 {
@@ -25,5 +28,33 @@ public class Utilities
 			sb.append(line +"\n");
 		}
 		return sb.toString();
+	}
+
+	public static void closeStream(InputStream instream)
+	{
+		try
+		{
+			if (instream != null)
+			{
+				instream.close();
+			}
+		}
+		catch (IOException e)
+		{
+			Log.e("close stream", e.getMessage());
+		}
+	}
+
+	public static String getDataFromUrl(String urlString, String logUrlEntry) throws IOException
+	{
+		Log.i(logUrlEntry, urlString);
+		URL url = new URL(urlString);
+		InputStream instream = null;
+		instream = url.openStream();
+		String result = convertStreamToString(instream);
+		/* close the inputstream */
+		closeStream(instream);
+
+		return result;
 	}
 }

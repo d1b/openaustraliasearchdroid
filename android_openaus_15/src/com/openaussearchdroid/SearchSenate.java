@@ -63,31 +63,19 @@ public class SearchSenate extends Activity
 				"&state=" + states.getSelectedItem().toString() +
 				"&output=json";
 
-				Log.i("url", urlstring);
 				Context context = v.getContext();
-				URL url;
+
+				String result;
 				try
 				{
-					url = new URL(urlstring);
+					result = Utilities.getDataFromUrl(urlstring, "url");
 				}
-				catch (MalformedURLException e)
+				catch (IOException e)
 				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 					return;
 				}
-				String result;
-				try 
-				{
-					result = Utilities.convertStreamToString(url.openStream());
-				}
-				catch (IOException e) 
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					return;
-				}
-				
 				Log.i("GetResult",result);
 				JSONArray jsonr= null;
 				try
@@ -181,7 +169,7 @@ public class SearchSenate extends Activity
 						catch (JSONException e)
 						{
 							e.printStackTrace();
-							
+
 						}
 					}
 					TextView tvr = new TextView(context);
@@ -198,9 +186,8 @@ public class SearchSenate extends Activity
 					tabr.addView(tvr);
 					innerlayout.addView(tabr);
 				}
-
 			}
-			
+
 			public void onNothingSelected(AdapterView arg0)
 			{
 

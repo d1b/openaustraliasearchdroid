@@ -53,49 +53,23 @@ public class SearchHansard extends Activity
 			public void onClick(View v)
 			{
 				et = (EditText) findViewById(R.id.SearchHansardText);
-				String urlstring = "http://www.openaustralia.org/api/getDebates" +
+				String urlString = "http://www.openaustralia.org/api/getDebates" +
 				"?key=" + oakey +
 				"&type=" + houseselect.getSelectedItem().toString() +
 				"&search=" + URLEncoder.encode(et.getText().toString()) +
 				"&output=json";
-				Log.i("url", urlstring);
-
-				URL url;
-				InputStream instream;
+				String result;
 				try
 				{
-					url = new URL(urlstring);
-				}
-				catch (MalformedURLException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					return;
-				}
-
-				try
-				{
-					instream = url.openStream();
+					result = Utilities.getDataFromUrl(urlString, "url");
 				}
 				catch (IOException e)
 				{
 					e.printStackTrace();
 					return;
 				}
-
-
-				String result;
-				try
-				{
-					result = Utilities.convertStreamToString(instream);
-				} 
-				catch (IOException e) 
-				{
-					e.printStackTrace();
-					return;
-				}
 				Log.i("GetResult",result);
-				JSONObject jsonr = null;
+				JSONObject jsonr;
 				try
 				{
 					jsonr = new JSONObject(result);
@@ -103,6 +77,7 @@ public class SearchHansard extends Activity
 				catch(JSONException e)
 				{
 					Log.e("jsonerror", e.getMessage().toString());
+					return;
 				}
 
 				hansinner.removeAllViewsInLayout();
@@ -150,7 +125,7 @@ public class SearchHansard extends Activity
 				catch (IOException e)
 				{
 					Log.e("DEBUGTAG", "Remtoe Image Exception", e);
-				} 
+				}
 				*/
 			}
 		});
@@ -160,37 +135,12 @@ public class SearchHansard extends Activity
 	public void searchHansardButtonClick(View target) throws IOException
 	{
 		et = (EditText) findViewById(R.id.SearchHansardText);
-		String urlstring = "http://www.openaustralia.org/api/getDebates" +
+		String urlString = "http://www.openaustralia.org/api/getDebates" +
 		"?key=" + oakey +
 		"&type=" + houseselect.getSelectedItem().toString() +
 		"&search=" + URLEncoder.encode(et.getText().toString()) +
 		"&output=json";
-		URL url;
-
-
-		Log.i("url", urlstring);
-		try
-		{
-			url = new URL(urlstring);
-		}
-		catch (MalformedURLException e1)
-		{
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			return;
-		}
-
-		InputStream instream;
-		try
-		{
-			instream = url.openStream();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-			return;
-		}
-		String result = Utilities.convertStreamToString(instream);
+		String result = Utilities.getDataFromUrl(urlString, "url");
 		Log.i("GetResult",result);
 		JSONObject jsonr;
 		try

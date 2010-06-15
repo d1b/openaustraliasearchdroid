@@ -61,36 +61,24 @@ public class SearchReps extends Activity
 				etext = (EditText) findViewById(R.id.EditText01);
 				Context context = v.getContext();
 				tv = (TextView) findViewById(R.id.TextView01);
-				String urlstring = "http://www.openaustralia.org/api/getRepresentative" +
+				String urlString = "http://www.openaustralia.org/api/getRepresentative" +
 				"?key=" + oakey +
 				"&division=" + URLEncoder.encode(etext.getText().toString()) +
 				"&output=json";
-				Log.i("OpenAusURL", urlstring);
-				URL url;
+				String result;
 				try 
 				{
-					url = new URL(urlstring);
+					result = Utilities.getDataFromUrl(urlString, "OpenAusURL");
 				}
-				catch (MalformedURLException e)
+				catch (IOException e) 
 				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 					return;
 				}
-				InputStream instream;
+				
 				try
 				{
-					instream = url.openStream();
-				}
-				catch (IOException e)
-				{
-					Log.i("Praeda", e.getMessage());
-					e.printStackTrace();
-					return;
-				}
-				try
-				{
-					String result = Utilities.convertStreamToString(instream);
 					Log.i("GetResult",result);
 					JSONObject json;
 					try
@@ -177,7 +165,6 @@ public class SearchReps extends Activity
 								{
 									Log.e("DEBUGTAG", "Remtoe Image Exception", e);
 								}
-
 							}
 						}
 						catch (JSONException e)
@@ -279,15 +266,12 @@ public class SearchReps extends Activity
 					Log.i("Praeda","<jsonobject>\n"+json.toString()+"\n</jsonobject>");
 
 					// Closing the input stream will trigger connection release
-					instream.close();
 				}
 				catch(IOException e)
 				{
 					Log.e("searchRepFail", e.getMessage().toString());
 				}
 			}
-
-
 		});
 	}
 
