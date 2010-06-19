@@ -20,8 +20,6 @@ public class PerformHansardSearch extends AsyncTask <HansardSearch, Integer, JSO
 	@Override
 	protected JSONArray doInBackground(HansardSearch... hansSearchArray)
 	{
-		// TODO Auto-generated method stub
-
 		HansardSearch hansSearch = hansSearchArray[0];
 		this.v = hansSearch.getView();
 		this.hansInnerLayout = hansSearch.getHansInnerLayout();
@@ -32,12 +30,10 @@ public class PerformHansardSearch extends AsyncTask <HansardSearch, Integer, JSO
 		catch (IOException e)
 		{
 			Utilities.recordStackTrace(e);
-			e.printStackTrace();
 		}
 		catch (JSONException e)
 		{
 			Utilities.recordStackTrace(e);
-			e.printStackTrace();
 		}
 		if (hansSearch.getResultJson() == null)
 		{
@@ -52,7 +48,6 @@ public class PerformHansardSearch extends AsyncTask <HansardSearch, Integer, JSO
 		}
 		catch (JSONException e)
 		{
-			System.out.println(hansSearch.getResultRaw());
 			Utilities.recordStackTrace(e);
 			return null;
 		}
@@ -75,10 +70,9 @@ public class PerformHansardSearch extends AsyncTask <HansardSearch, Integer, JSO
 			{
 				jsonD = json.getJSONObject(i);
 			}
-			catch (JSONException e1)
+			catch (JSONException e)
 			{
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				Utilities.recordStackTrace(e);
 			}
 
 			TextView tvr = new TextView(v.getContext());
@@ -89,7 +83,7 @@ public class PerformHansardSearch extends AsyncTask <HansardSearch, Integer, JSO
 			}
 			catch (JSONException e)
 			{
-				e.printStackTrace();
+				Utilities.recordStackTrace(e);
 			}
 			hansInnerLayout.addView(tvr);
 		}

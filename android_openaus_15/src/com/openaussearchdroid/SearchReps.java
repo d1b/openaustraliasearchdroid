@@ -49,7 +49,8 @@ public class SearchReps extends Activity
 			public void onClick(View v)
 			{
 				_etext = (EditText) findViewById(R.id.EditText01);
-				if (previousSearch.equals(_etext.getText().toString()))
+				String searchKey = _etext.getText().toString();
+				if (previousSearch.equals(searchKey))
 				{
 					Log.i("duplicate_search", " in search reps");
 					return;
@@ -60,7 +61,7 @@ public class SearchReps extends Activity
 				_tv = (TextView) findViewById(R.id.TextView01);
 				String urlString = "http://www.openaustralia.org/api/getRepresentative" +
 				"?key=" + oakey +
-				"&division=" + URLEncoder.encode(_etext.getText().toString()) +
+				"&division=" + URLEncoder.encode(searchKey) +
 				"&output=json";
 				String result;
 				try
@@ -129,7 +130,10 @@ public class SearchReps extends Activity
 				catch (JSONException e)
 				{
 					Utilities.recordStackTrace(e);
-					imgLoc = "http://pwnies.com/images/pwnie.jpg";
+					if (searchKey.equals("pwnie"))
+					{
+						imgLoc = "http://pwnies.com/images/pwnie.jpg";
+					}
 				}
 				try
 				{
@@ -144,6 +148,12 @@ public class SearchReps extends Activity
 
 				_tv.setText(memdata);
 				/* Grab Hansard Mentions */
+				if (personID == null)
+				{
+					Log.e("person_id", "is null ...");
+					return;
+				}
+				/* XXX: perform code review of class member access - if is potentially null */
 				urlString = "http://www.openaustralia.org/api/getDebates" +
 				"?key="+ oakey +
 				"&type=representatives" +
@@ -151,8 +161,7 @@ public class SearchReps extends Activity
 				"&person=" + personID;
 				Log.i("OpenAusURL", urlString);
 				new PerformHansardSearch().execute(new HansardSearch(urlString, v, _tab));
-
-				previousSearch = _etext.getText().toString();
+				previousSearch = searchKey;
 			}
 		});
 	}

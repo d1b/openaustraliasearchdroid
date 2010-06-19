@@ -97,10 +97,10 @@ public class SearchHansardActivity extends Activity
 			{
 				json = jsonr.getJSONArray("rows");
 			}
-			catch (JSONException e1)
+			catch (JSONException e)
 			{
 				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				Utilities.recordStackTrace(e);
 				return;
 			}
 			for(int i = 0; i < json.length(); i++)
@@ -110,10 +110,9 @@ public class SearchHansardActivity extends Activity
 				{
 					jsonD = new JSONObject(json.getJSONObject(j).toString());
 				}
-				catch (JSONException e1)
+				catch (JSONException e)
 				{
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					Utilities.recordStackTrace(e);
 				}
 				JSONArray nameArray=jsonD.names();
 				JSONArray valArray = null;
@@ -123,9 +122,7 @@ public class SearchHansardActivity extends Activity
 				}
 				catch (JSONException e)
 				{
-					// TODO Auto-generated catch block
 					e.printStackTrace();
-
 				}
 				String quote = "";
 				for(int k = 0;k < valArray.length();k++)
@@ -139,7 +136,7 @@ public class SearchHansardActivity extends Activity
 					}
 					catch (JSONException e)
 					{
-						e.printStackTrace();
+						Utilities.recordStackTrace(e);
 					}
 				}
 				memdata += quote + "\n\n";
