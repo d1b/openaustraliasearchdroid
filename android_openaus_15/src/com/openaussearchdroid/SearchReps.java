@@ -83,72 +83,64 @@ public class SearchReps extends Activity
 					e.printStackTrace();
 					return;
 				}
-
-				JSONArray nameArray = json.names();
-				JSONArray valArray;
-
+				String memdata = null;
+				String fullName = null;
+				String dateEntered = null;
+				String party = null;
+				String personID = null;
+				String imgLoc = null;
 				try
 				{
-					valArray = json.toJSONArray(nameArray);
+					fullName = "Name: " + json.getString("full_name") + "\n";
 				}
 				catch (JSONException e)
 				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					return;
+					Utilities.recordStackTrace(e);
 				}
-				String memdata = null;
-				String full_name = null;
-				String date_entered = null;
-				String party = null;
-				String personid = null;
-				String stringAtIndex = null;
-				String valueValueAtIndex = null;
-				for(int i = 0;i< valArray.length() ;i++)
+				try
 				{
-					try
-					{
-						stringAtIndex = nameArray.getString(i);
-						valueValueAtIndex = valArray.getString(i);
-					}
-					catch (JSONException e)
-					{
-						Utilities.recordStackTrace(e);
-						e.printStackTrace();
-						return;
-					}
-
-
-					if(stringAtIndex.equals("full_name"))
-					{
-						full_name = "Name: " + valueValueAtIndex + "\n";
-					}
-					else if(stringAtIndex.equals("party"))
-					{
-						party = "Party: " + valueValueAtIndex + "\n";
-					}
-					else if(stringAtIndex.equals("entered_house"))
-					{
-						date_entered = "Date Elected: " + valueValueAtIndex + "\n";
-					}
-					else if(stringAtIndex.equals("person_id"))
-					{
-						personid = valueValueAtIndex;
-					}
-					else if(stringAtIndex.equals("image"))
-					{
-						try
-						{
-							fetchRepImage(valueValueAtIndex);
-						}
-						catch (IOException e)
-						{
-							Utilities.recordStackTrace(e);
-						}
-					}
+					dateEntered = "Date Elected: " + json.getString("entered_house") + "\n";
+				}
+				catch (JSONException e)
+				{
+					Utilities.recordStackTrace(e);
+				}
+				try
+				{
+					party = "Party: " + json.getString("party");
+				}
+				catch (JSONException e)
+				{
+					Utilities.recordStackTrace(e);
+				}
+				try
+				{
+					personID = json.getString("person_id");
+				}
+				catch (JSONException e)
+				{
+					Utilities.recordStackTrace(e);
 				}
 
-				memdata = full_name + date_entered + party;
+				try
+				{
+					imgLoc = "http://www.openaustralia.org" + json.getString("image");
+				}
+				catch (JSONException e)
+				{
+					Utilities.recordStackTrace(e);
+					imgLoc = "http://pwnies.com/images/pwnie.jpg";
+				}
+				try
+				{
+					fetchRepImage(imgLoc);
+				}
+				catch (IOException e)
+				{
+					Utilities.recordStackTrace(e);
+				}
+
+				memdata = fullName + dateEntered + party;
 
 				_tv.setText(memdata);
 				/* Grab Hansard Mentions */
@@ -156,33 +148,20 @@ public class SearchReps extends Activity
 				"?key="+ oakey +
 				"&type=representatives" +
 				"&order=d" +
-				"&person=" + personid;
+				"&person=" + personID;
 				Log.i("OpenAusURL", urlString);
 				new PerformHansardSearch().execute(new HansardSearch(urlString, v, _tab));
 
-				// A Simple JSONObject Value Pushing
-				try
-				{
-					json.put("sample key", "sample value");
-				}
-				catch (JSONException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				Log.i("Praeda","<jsonobject>\n"+json.toString()+"\n</jsonobject>");
-				// Closing the input stream will trigger connection release
 				previousSearch = _etext.getText().toString();
-
 			}
 		});
 	}
 
-	public void fetchRepImage(String valueValueAtIndex) throws IOException
+	public void fetchRepImage(String imgLoc) throws IOException
 	{
 		URL aURL;
-		Log.i("searchrepimage", "http://www.openaustralia.org" + valueValueAtIndex);
-		aURL = new URL("http://www.openaustralia.org" + valueValueAtIndex);
+		Log.i("searchrepimage", imgLoc);
+		aURL = new URL(imgLoc);
 
 		URLConnection con;
 		con = aURL.openConnection();
@@ -192,9 +171,7 @@ public class SearchReps extends Activity
 
 		con.connect();
 		is = con.getInputStream();
-		/* Buffered is always good for a performance plus. */
 		bis = new BufferedInputStream(is);
-
 		/* Decode url-data to a bitmap. */
 		Bitmap bm = BitmapFactory.decodeStream(bis);
 		try
@@ -205,7 +182,6 @@ public class SearchReps extends Activity
 		{
 			Utilities.recordStackTrace(e);
 		}
-
 		try
 		{
 			is.close();
@@ -214,7 +190,6 @@ public class SearchReps extends Activity
 		{
 			Utilities.recordStackTrace(e);
 		}
-		/* Apply the Bitmap to the ImageView that will be returned. */
 		_iv.setImageBitmap(bm);
 	}
 
