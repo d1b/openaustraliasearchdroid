@@ -15,6 +15,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,113 +27,128 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
-public class SearchHansard extends Activity
+public class SearchHansardActivity extends Activity
 {
 
 	private EditText _et;
+	private Button previousSelection;
 	private TextView _tv;
 	private Spinner houseselect;
 	private static final String oakey = "F8c6oBD4YQsvEAGJT8DUgL8p";
-	private Button hansbutton;
-	private LinearLayout hansinner;
+	private Button hansButton;
 
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.searchhansard);
 		houseselect = (Spinner) findViewById(R.id.HouseSelector);
-		hansinner = (LinearLayout) findViewById(R.id.hansinnerlayout);
 		final String[] items = {"representatives", "senate"};
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_spinner_item, items);
 		houseselect.setAdapter(adapter);
-		hansbutton = (Button) findViewById(R.id.SearchHansardButton);
-		hansbutton.setOnClickListener(new View.OnClickListener()
+		hansButton = (Button) findViewById(R.id.SearchHansardButton);
+		hansButton.setOnClickListener(new View.OnClickListener()
 		{
 
 			public void onClick(View v)
 			{
-				_et = (EditText) findViewById(R.id.SearchHansardText);
-				String urlString = "http://www.openaustralia.org/api/getDebates" +
-				"?key=" + oakey +
-				"&type=" + houseselect.getSelectedItem().toString() +
-				"&search=" + URLEncoder.encode(_et.getText().toString()) +
-				"&output=json";
-				String result;
-				try
+				EditText choice = (EditText) findViewById(R.id.SearchHansardText);
+
+				if (choice.equals(_et) && hansButton.equals(previousSelection))
 				{
-					result = Utilities.getDataFromUrl(urlString, "url");
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
+					Log.i("duplicate_selection", "duplicate search in hansard search");
 					return;
 				}
-				Log.i("GetResult",result);
-				JSONObject jsonr;
+				new PerformHansardSearch().execute(v);
+				previousSelection = hansButton;
+			}
+		});
+	}
+
+	private class PerformHansardSearch extends AsyncTask <View, Integer, JSONArray>
+	{
+		private View v;
+
+		@Override
+		protected JSONArray doInBackground(View... views)
+		{
+			// TODO Auto-generated method stub
+			this.v = views[0];
+			HansardSearch hansSearch = new HansardSearch(getHansardUrl());
+			try
+			{
+				hansSearch.fetchSearchResultAndSetJsonResult();
+			}
+			catch (IOException e)
+			{
+				Utilities.recordStackTrace(e);
+				e.printStackTrace();
+			}
+			catch (JSONException e)
+			{
+				Utilities.recordStackTrace(e);
+				e.printStackTrace();
+			}
+			if (hansSearch.getResultJson() == null)
+			{
+				Log.e("json is null", "in doInBackground in PerformHansardSearch");
+				return null;
+			}
+
+			JSONArray jsonArray;
+			try
+			{
+				jsonArray = hansSearch.getResultJson().getJSONArray("rows");
+			}
+			catch (JSONException e)
+			{
+				System.out.println(hansSearch.getResultRaw());
+				Utilities.recordStackTrace(e);
+				return null;
+			}
+			return jsonArray;
+		}
+		@Override
+		protected void onPostExecute(JSONArray json)
+		{
+			LinearLayout hansInnerLayout = (LinearLayout) findViewById(R.id.hansinnerlayout);
+			hansInnerLayout.removeAllViewsInLayout();
+			if (json == null)
+			{
+				Log.e("json is null", "on post exec in PerformHansardSearch");
+				return;
+			}
+			JSONObject jsonD;
+			for(int i = 0; i < json.length(); i++)
+			{
+				jsonD = null;
+
 				try
 				{
-					jsonr = new JSONObject(result);
-				}
-				catch(JSONException e)
-				{
-					Log.e("jsonerror", e.getMessage().toString());
-					return;
-				}
-
-				hansinner.removeAllViewsInLayout();
-				JSONArray json;
-
-				try
-				{
-					json = jsonr.getJSONArray("rows");
+					jsonD = json.getJSONObject(i);
 				}
 				catch (JSONException e1)
 				{
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
-					return;
 				}
 
-				JSONObject jsonD;
-				for(int i = 0; i < json.length(); i++)
+				TextView tvr = new TextView(this.v.getContext());
+				tvr.setId(500+i);
+				try
 				{
-					jsonD = null;
-
-					try
-					{
-						jsonD = json.getJSONObject(i);
-					}
-					catch (JSONException e1)
-					{
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-
-					TextView tvr = new TextView(v.getContext());
-					tvr.setId(500+i);
-					try
-					{
-						tvr.setText(jsonD.getString("body"));
-					}
-					catch (JSONException e)
-					{
-						e.printStackTrace();
-					}
-					hansinner.addView(tvr);
+					tvr.setText(jsonD.getString("body"));
 				}
-				/*
-				catch (IOException e)
+				catch (JSONException e)
 				{
-					Log.e("DEBUGTAG", "Remtoe Image Exception", e);
+					e.printStackTrace();
 				}
-				*/
+				hansInnerLayout.addView(tvr);
 			}
-		});
+		}
 	}
 
-	/** is this even used ? */
-	public void searchHansardButtonClick(View target) throws IOException
+	public String getHansardUrl()
 	{
 		_et = (EditText) findViewById(R.id.SearchHansardText);
 		String urlString = "http://www.openaustralia.org/api/getDebates" +
@@ -140,7 +156,13 @@ public class SearchHansard extends Activity
 		"&type=" + houseselect.getSelectedItem().toString() +
 		"&search=" + URLEncoder.encode(_et.getText().toString()) +
 		"&output=json";
-		String result = Utilities.getDataFromUrl(urlString, "url");
+		return urlString;
+	}
+
+	/** is this even used ? */
+	public void searchHansardButtonClick(View target) throws IOException
+	{
+		String result = Utilities.getDataFromUrl(getHansardUrl(), "url");
 		Log.i("GetResult",result);
 		JSONObject jsonr;
 		try
@@ -210,12 +232,6 @@ public class SearchHansard extends Activity
 			}
 			_tv.setText(memdata);
 		}
-		/*
-		catch (IOException e)
-		{
-			Log.e("DEBUGTAG", "Remtoe Image Exception", e);
-		}
-		*/
 	}
-
 }
+

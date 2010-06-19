@@ -73,7 +73,7 @@ public class OpenAusSearchDroid extends Activity
 			public void onClick(View v)
 			{
 				// TODO Auto-generated method stub
-				Intent myIntent = new Intent(v.getContext(), SearchHansard.class);
+				Intent myIntent = new Intent(v.getContext(), SearchHansardActivity.class);
 				startActivityForResult(myIntent, 0);
 			}
 		});
