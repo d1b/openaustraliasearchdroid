@@ -33,29 +33,29 @@ public class SearchSenate extends Activity
 {
 
 	private static final String oakey = "F8c6oBD4YQsvEAGJT8DUgL8p";
-	private Spinner states;
-	private TableLayout innerlayout;
+	private Spinner _states;
+	private TableLayout _innerlayout;
 
 
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.searchrep_senate);
-		states = (Spinner) findViewById(R.id.StateSpinner);
-		innerlayout = (TableLayout) findViewById(R.id.SenateTable);
+		_states = (Spinner) findViewById(R.id.StateSpinner);
+		_innerlayout = (TableLayout) findViewById(R.id.SenateTable);
 		final String[] items = {"NSW", "VIC", "queensland", "TAS", "WA", "SA", "NT", "ACT"};
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-		android.R.layout.simple_spinner_item, items);
+				android.R.layout.simple_spinner_item, items);
 
-		states.setAdapter(adapter);
-		states.setOnItemSelectedListener(new OnItemSelectedListener()
+		_states.setAdapter(adapter);
+		_states.setOnItemSelectedListener(new OnItemSelectedListener()
 		{
 			public void onItemSelected(AdapterView parent, View v, 	int position, long id)
 			{
-				innerlayout.removeAllViewsInLayout();
+				_innerlayout.removeAllViewsInLayout();
 				String urlstring = "http://www.openaustralia.org/api/getSenators" +
 				"?key=" + oakey +
-				"&state=" + states.getSelectedItem().toString() +
+				"&state=" + _states.getSelectedItem().toString() +
 				"&output=json";
 
 				Context context = v.getContext();
@@ -67,12 +67,11 @@ public class SearchSenate extends Activity
 				}
 				catch (IOException e)
 				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					Utilities.recordStackTrace(e);
 					return;
 				}
 				Log.i("GetResult",result);
-				JSONArray jsonr= null;
+				JSONArray jsonr = null;
 				try
 				{
 					jsonr = new JSONArray(result);
@@ -82,6 +81,7 @@ public class SearchSenate extends Activity
 					Log.e("jsonerror", e.getMessage().toString());
 					return;
 				}
+
 				for(int j = 0; j < jsonr.length(); j++)
 				{
 					TableRow tabr = new TableRow(context);
@@ -91,82 +91,32 @@ public class SearchSenate extends Activity
 					{
 						json = new JSONObject(jsonr.getJSONObject(j).toString());
 					}
-					catch (JSONException e1)
-					{
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-						return;
-					}
-					JSONArray nameArray = json.names();
-					JSONArray valArray;
-					try
-					{
-						valArray = json.toJSONArray(nameArray);
-					}
 					catch (JSONException e)
 					{
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+						Utilities.recordStackTrace(e);
 						return;
 					}
 
 					String full_name = null;
 					String party = null;
-					for(int i=0;i<valArray.length();i++)
+					try
 					{
-						try
-						{
-							Log.i("Praeda","<jsonname"+i+">\n"+nameArray.getString(i)+"\n</jsonname"+i+">\n"
-							+"<jsonvalue"+i+">\n"+valArray.getString(i)+"\n</jsonvalue"+i+">");
-							if(nameArray.getString(i).equals("name"))
-							{
-								full_name = "Name: " + valArray.getString(i) + "\n";
-							}
-							else if(nameArray.getString(i).equals("party"))
-							{
-								party = "Party: " + valArray.getString(i) + "\n";
-							}
-							else if(nameArray.getString(i).equals("person_id"))
-							{
-								URL aURL;
-								try
-								{
-									Log.i("searchrepimage", "http://www.openaustralia.org" + valArray.getString(i));
-									aURL = new URL("http://www.openaustralia.org" + valArray.getString(i));
-								}
-								catch (MalformedURLException e1)
-								{
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
-									return;
-								}
-								try
-								{
-									URLConnection con = aURL.openConnection();
-									con.connect();
-									InputStream is = con.getInputStream();
-									/* Buffered is always good for a performance plus. */
-									BufferedInputStream bis = new BufferedInputStream(is);
-									/* Decode url-data to a bitmap. */
-									Bitmap bm = BitmapFactory.decodeStream(bis);
-									bis.close();
-									is.close();
-									/* Apply the Bitmap to the ImageView that will be
-									returned. */
-									iv.setImageBitmap(bm);
-								}
-								catch (IOException e)
-								{
-									Log.e("DEBUGTAG", "Remtoe Image Exception", e);
-								}
-							}
-						}
-						catch (JSONException e)
-						{
-							e.printStackTrace();
-
-						}
+						full_name =  "Name: " + json.get("name") + "\n";
 					}
+					catch (JSONException e)
+					{
+						Utilities.recordStackTrace(e);
+					}
+					try
+					{
+						party = "Party: " + json.get("party") + "\n";
+					}
+					catch (JSONException e)
+					{
+						Utilities.recordStackTrace(e);
+					}
+
 					TextView tvr = new TextView(context);
 					tvr.setId(300+j);
 					tvr.setText(full_name + party);
@@ -179,11 +129,9 @@ public class SearchSenate extends Activity
 					});
 					tabr.addView(iv);
 					tabr.addView(tvr);
-					innerlayout.addView(tabr);
+					_innerlayout.addView(tabr);
 				}
 			}
-
-
 			public void onNothingSelected(AdapterView arg0)
 			{
 

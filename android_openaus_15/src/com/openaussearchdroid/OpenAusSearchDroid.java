@@ -55,5 +55,11 @@ public class OpenAusSearchDroid extends Activity
 		});
 
 	}
+	@Override
+	public void onPause()
+	{
+		super.onPause();
+	}
+
 
 }

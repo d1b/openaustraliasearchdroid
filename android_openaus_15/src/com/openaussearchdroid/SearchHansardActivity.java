@@ -22,11 +22,14 @@ public class SearchHansardActivity extends Activity
 {
 
 	private EditText _et;
-	private String previousSelection;
+
 	private TextView _tv;
 	private Spinner houseselect;
 	private static final String oakey = "F8c6oBD4YQsvEAGJT8DUgL8p";
 	private Button hansButton;
+
+	private String previousHouseSelection = "";
+	private String previousKeySelection = "";
 
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -43,9 +46,8 @@ public class SearchHansardActivity extends Activity
 
 			public void onClick(View v)
 			{
-				EditText choice = (EditText) findViewById(R.id.SearchHansardText);
-
-				if (choice.equals(_et) && houseselect.getSelectedItem().toString().equals(previousSelection))
+				_et = (EditText) findViewById(R.id.SearchHansardText);
+				if (_et.getText().toString().equals(previousKeySelection) && houseselect.getSelectedItem().toString().equals(previousHouseSelection))
 				{
 					Log.i("duplicate_selection", "duplicate search in hansard search");
 					return;
@@ -54,7 +56,8 @@ public class SearchHansardActivity extends Activity
 				hansInnerLayout.removeAllViewsInLayout();
 
 				new PerformHansardSearch().execute(new HansardSearch(getHansardUrl(), v, hansInnerLayout));
-				previousSelection = houseselect.getSelectedItem().toString();
+				previousHouseSelection = houseselect.getSelectedItem().toString();
+				previousKeySelection = _et.getText().toString();
 			}
 		});
 	}
@@ -62,7 +65,6 @@ public class SearchHansardActivity extends Activity
 
 	public String getHansardUrl()
 	{
-		_et = (EditText) findViewById(R.id.SearchHansardText);
 		String urlString = "http://www.openaustralia.org/api/getDebates" +
 		"?key=" + oakey +
 		"&type=" + houseselect.getSelectedItem().toString() +
