@@ -17,7 +17,6 @@ public class HansardSearch
 	private View view;
 	private LinearLayout hansInnerLayout;
 
-
 	public HansardSearch(String url)
 	{
 		this.url = url;
