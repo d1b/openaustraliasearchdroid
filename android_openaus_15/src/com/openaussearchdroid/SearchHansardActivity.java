@@ -31,7 +31,7 @@ public class SearchHansardActivity extends Activity
 {
 
 	private EditText _et;
-	private Button previousSelection;
+	private String previousSelection;
 	private TextView _tv;
 	private Spinner houseselect;
 	private static final String oakey = "F8c6oBD4YQsvEAGJT8DUgL8p";
@@ -54,99 +54,20 @@ public class SearchHansardActivity extends Activity
 			{
 				EditText choice = (EditText) findViewById(R.id.SearchHansardText);
 
-				if (choice.equals(_et) && hansButton.equals(previousSelection))
+				if (choice.equals(_et) && houseselect.getSelectedItem().toString().equals(previousSelection))
 				{
 					Log.i("duplicate_selection", "duplicate search in hansard search");
 					return;
 				}
-				new PerformHansardSearch().execute(v);
-				previousSelection = hansButton;
+				LinearLayout hansInnerLayout = (LinearLayout) findViewById(R.id.hansinnerlayout);
+				hansInnerLayout.removeAllViewsInLayout();
+
+				new PerformHansardSearch().execute(new HansardSearch(getHansardUrl(), v, hansInnerLayout));
+				previousSelection = houseselect.getSelectedItem().toString();
 			}
 		});
 	}
 
-	private class PerformHansardSearch extends AsyncTask <View, Integer, JSONArray>
-	{
-		private View v;
-
-		@Override
-		protected JSONArray doInBackground(View... views)
-		{
-			// TODO Auto-generated method stub
-			this.v = views[0];
-			HansardSearch hansSearch = new HansardSearch(getHansardUrl());
-			try
-			{
-				hansSearch.fetchSearchResultAndSetJsonResult();
-			}
-			catch (IOException e)
-			{
-				Utilities.recordStackTrace(e);
-				e.printStackTrace();
-			}
-			catch (JSONException e)
-			{
-				Utilities.recordStackTrace(e);
-				e.printStackTrace();
-			}
-			if (hansSearch.getResultJson() == null)
-			{
-				Log.e("json is null", "in doInBackground in PerformHansardSearch");
-				return null;
-			}
-
-			JSONArray jsonArray;
-			try
-			{
-				jsonArray = hansSearch.getResultJson().getJSONArray("rows");
-			}
-			catch (JSONException e)
-			{
-				System.out.println(hansSearch.getResultRaw());
-				Utilities.recordStackTrace(e);
-				return null;
-			}
-			return jsonArray;
-		}
-		@Override
-		protected void onPostExecute(JSONArray json)
-		{
-			LinearLayout hansInnerLayout = (LinearLayout) findViewById(R.id.hansinnerlayout);
-			hansInnerLayout.removeAllViewsInLayout();
-			if (json == null)
-			{
-				Log.e("json is null", "on post exec in PerformHansardSearch");
-				return;
-			}
-			JSONObject jsonD;
-			for(int i = 0; i < json.length(); i++)
-			{
-				jsonD = null;
-
-				try
-				{
-					jsonD = json.getJSONObject(i);
-				}
-				catch (JSONException e1)
-				{
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-
-				TextView tvr = new TextView(this.v.getContext());
-				tvr.setId(500+i);
-				try
-				{
-					tvr.setText(jsonD.getString("body"));
-				}
-				catch (JSONException e)
-				{
-					e.printStackTrace();
-				}
-				hansInnerLayout.addView(tvr);
-			}
-		}
-	}
 
 	public String getHansardUrl()
 	{
