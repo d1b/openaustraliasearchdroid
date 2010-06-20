@@ -168,6 +168,16 @@ public class SearchReps extends Activity
 
 	public void fetchRepImage(String imgLoc) throws IOException
 	{
+		/*
+		android is so awesome that the Log.i a few lines down
+		will trigger a null pointer exception - because it cannot
+		print null ... right ... - bail out early.
+		The pwnie has been really useful in debugging!
+		*/
+		if (imgLoc == null)
+		{
+			return;
+		}
 		URL aURL;
 		Log.i("searchrepimage", imgLoc);
 		aURL = new URL(imgLoc);
